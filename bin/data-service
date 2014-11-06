@@ -1,0 +1,290 @@
+#!/usr/bin/env node
+var program = require('gitlike-cli');
+var readline = require('readline');
+
+var readPipe = function (stream, callback) {
+  var body = '';
+  stream.on('data', function (chunk) {
+    body += chunk;
+  });
+
+  stream.on('end', function () {
+    callback(body);
+  });
+};
+
+/* LIST
+************/
+function listUsers() {
+  var run = require('./list-users.js');
+  run();
+}
+
+function listSensors(args) {
+  var run = require('./list-sensors.js');
+  run(args.userUID);
+}
+
+function listDatastreams(args) {
+  var run = require('./list-datastreams.js');
+  run(args.userUID, args.sensorUID);
+}
+
+function listRecords(args) {
+  var run = require('./list-records.js');
+  run(args.datastreamUID);
+}
+
+/* SHOW
+************/
+function showUser(args) {
+  var run = require('./show-user.js');
+  run(args.uid);
+}
+
+function showSensor(args) {
+  var run = require('./show-sensor.js');
+  run(args.userUID, args.sensorUID);
+}
+
+function showDatastream(args) {
+  var run = require('./show-datastream.js');
+  run(args.userUID, args.sensorUID, args.datastreamUID);
+}
+
+function showRecord(args) {
+  var run = require('./show-record.js');
+  run(args.datastreamUID, args.recordUID);
+}
+
+/* CREATE
+************/
+function createUser(args) {
+  readPipe(args.etc[0], function (body) {
+    var run = require('./create-user.js');
+    run(body);
+  });
+}
+
+function createSensor(args) {
+  readPipe(args.etc[0], function (body) {
+    var run = require('./create-sensor.js');
+    run(args.userUID, body);
+  });
+}
+
+function createDatastream(args) {
+  readPipe(args.etc[0], function (body) {
+    var run = require('./create-datastream.js');
+    run(args.userUID, args.sensorUID, body);
+  });
+}
+
+function createRecord(args) {
+  readPipe(args.etc[0], function (body) {
+    var run = require('./create-record.js');
+    run(args.datastreamUID, body);
+  });
+}
+
+/* UPDATE
+************/
+function updateUser(args) {
+  readPipe(args.etc[0], function (body) {
+    var run = require('./update-user.js');
+    run(args.UID, body);
+  });
+}
+
+function updateSensor(args) {
+  readPipe(args.etc[0], function (body) {
+    var run = require('./update-sensor.js');
+    run(args.userUID, args.sensorUID, body);
+  });
+}
+
+function updateDatastream(args) {
+  readPipe(args.etc[0], function (body) {
+    var run = require('./update-datastream.js');
+    run(args.userUID, args.sensorUID, args.datastreamUID, body);
+  });
+}
+
+
+/* DELETE
+************/
+function destroyUser(args) {
+  var rl = readline.createInterface(process.stdin, process.stdout);
+  rl.question("Destroy user? YES/[no]: ", function (answer) {
+    if (answer !== "YES") {
+      console.log("No confirmation, so not deleting user.");
+      process.exit(1);
+    } else {
+      var run = require('./destroy-user.js');
+      run(args.UID);
+      rl.close();
+    }
+  });
+}
+
+function destroySensor(args) {
+  var rl = readline.createInterface(process.stdin, process.stdout);
+  rl.question("Destroy sensor? YES/[no]: ", function (answer) {
+    if (answer !== "YES") {
+      console.log("No confirmation, so not deleting sensor.");
+      process.exit(1);
+    } else {
+      var run = require('./destroy-sensor.js');
+      run(args.userUID, args.sensorUID);
+      rl.close();
+    }
+  });
+}
+
+function destroyDatastream(args) {
+  var rl = readline.createInterface(process.stdin, process.stdout);
+  rl.question("Destroy datastream? YES/[no]: ", function (answer) {
+    if (answer !== "YES") {
+      console.log("No confirmation, so not deleting datastream.");
+      process.exit(1);
+    } else {
+      var run = require('./destroy-datastream.js');
+      run(args.userUID, args.sensorUID, args.datastreamUID);
+      rl.close();
+    }
+  });
+}
+
+/* Parse Args
+************/
+program
+  .command('list')
+    .command('users')
+      .description("List all users")
+      .action(listUsers)
+      .parent
+    .command('sensors <userUID>')
+      .description("List sensors for a user")
+      .action(listSensors)
+      .parent
+    .command('datastreams <userUID> <sensorUID>')
+      .description("List datastreams for a sensor")
+      .action(listDatastreams)
+      .parent
+    .command('records <datastreamUID>')
+      .description("List records for a datastream")
+      .action(listRecords)
+      .parent
+    .parent
+
+  .command('show')
+    .command('user <UID>')
+      .description("Show a user")
+      .action(showUser)
+      .parent
+    .command('sensor <userUID> <sensorUID>')
+      .description("Show a sensor")
+      .action(showSensor)
+      .parent
+    .command('datastream <userUID> <sensorUID> <datastreamUID>')
+      .description("Show a datastream")
+      .action(showDatastream)
+      .parent
+    .command('record <datastreamUID> <recordUID>')
+      .description("Show a datastream record")
+      .action(showRecord)
+      .parent
+    .parent
+
+  .command('create')
+    .command('user')
+      .description("Create a user. Pipe a JSON representation of the user to this command.")
+      .action(createUser)
+      .on('help', function(cmd) {
+        cmd.outputIndented('Examples', [
+          '$ bin/data-service create user < new-user.json',
+          '$ cat new-user.json | bin/data-service create user'
+        ]);
+      })
+      .parent
+    .command('sensor <userUID>')
+      .description("Create a sensor. Pipe a JSON representation of the sensor to this command.")
+      .action(createSensor)
+      .on('help', function(cmd) {
+        cmd.outputIndented('Examples', [
+          '$ bin/data-service create sensor 05b57a33ded81eec75ed0af82a5487d3 < new-sensor.json',
+          '$ cat new-sensor.json | bin/data-service create sensor 05b57a33ded81eec75ed0af82a5487d3'
+        ]);
+      })
+      .parent
+    .command('datastream <userUID> <sensorUID>')
+      .description("Create a datastream. Pipe a JSON representation of the datastream to this command.")
+      .action(createDatastream)
+      .on('help', function(cmd) {
+        cmd.outputIndented('Examples', [
+          '$ bin/data-service create datastream 05b57a33ded81eec75ed0af82a5487d3 9b8c94bd21dc54db93b1ef73243a3fcc < new-datastream.json',
+          '$ cat new-datastream.json | bin/data-service create datastream 05b57a33ded81eec75ed0af82a5487d3 9b8c94bd21dc54db93b1ef73243a3fcc'
+        ]);
+      })
+      .parent
+    .command('record <datastreamUID>')
+      .description("Create a datastream record. Pipe a JSON representation of the datastream record to this command.")
+      .action(createRecord)
+      .on('help', function(cmd) {
+        cmd.outputIndented('Examples', [
+          '$ bin/data-service create record 2517f1bd2e68216b8598c30333377c95 < new-record.json',
+          '$ cat new-record.json | bin/data-service create record 2517f1bd2e68216b8598c30333377c95'
+        ]);
+      })
+      .parent
+    .parent
+
+  .command('update')
+    .command('user <UID>')
+      .description("Update a user. Pipe a JSON representation of the user to this command.")
+      .action(updateUser)
+      .on('help', function(cmd) {
+        cmd.outputIndented('Examples', [
+          '$ bin/data-service update user 05b57a33ded81eec75ed0af82a5487d3 < modified-user.json',
+          '$ cat modified-user.json | bin/data-service update user 05b57a33ded81eec75ed0af82a5487d3'
+        ]);
+      })
+      .parent
+    .command('sensor <userUID> <sensorUID>')
+      .description("Update a sensor. Pipe a JSON representation of the sensor to this command.")
+      .action(updateSensor)
+      .on('help', function(cmd) {
+        cmd.outputIndented('Examples', [
+          '$ bin/data-service update sensor 05b57a33ded81eec75ed0af82a5487d3 9b8c94bd21dc54db93b1ef73243a3fcc < modified-sensor.json',
+          '$ cat modified-sensor.json | bin/data-service update sensor 05b57a33ded81eec75ed0af82a5487d3 9b8c94bd21dc54db93b1ef73243a3fcc'
+        ]);
+      })
+      .parent
+    .command('datastream <userUID> <sensorUID> <datastreamUID>')
+      .description("Update a datastream. Pipe a JSON representation of the datastream to this command.")
+      .action(updateDatastream)
+      .on('help', function(cmd) {
+        cmd.outputIndented('Examples', [
+          '$ bin/data-service update datastream 05b57a33ded81eec75ed0af82a5487d3 9b8c94bd21dc54db93b1ef73243a3fcc 2517f1bd2e68216b8598c30333377c95 < modified-datastream.json',
+          '$ cat modified-datastream.json | bin/data-service update datastream 05b57a33ded81eec75ed0af82a5487d3 9b8c94bd21dc54db93b1ef73243a3fcc 2517f1bd2e68216b8598c30333377c95'
+        ]);
+      })
+      .parent
+    .parent
+
+  .command('destroy')
+    .command('user <UID>')
+      .description("Deletes a user. You will be asked for confirmation.")
+      .action(destroyUser)
+      .parent
+    .command('sensor <userUID> <sensorUID>')
+      .description("Deletes a sensor. You will be asked for confirmation.")
+      .action(destroySensor)
+      .parent
+    .command('datastream <userUID> <sensorUID> <datastreamUID>')
+      .description("Deletes a datastream. You will be asked for confirmation.")
+      .action(destroyDatastream)
+      .parent
+    .parent
+  .parse(process.argv);
+

@@ -5,5 +5,9 @@
   "description": "Node CLI to access RPI Data Service.",
   "main": "bin/data-service",
   "author": "James Badger",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "gitlike-cli": "^0.1.0",
+    "request": "^2.47.0"
+  }
 }
