@@ -1,0 +1,9 @@
+{
+  "name": "node-dataservice",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Node CLI to access RPI Data Service.",
+  "main": "bin/data-service",
+  "author": "James Badger",
+  "license": "ISC"
+}
