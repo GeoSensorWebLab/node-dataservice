@@ -43,7 +43,9 @@ Datastream Record Commands:
 * `bin/dataservice list records <datasteamUID>`
 * `bin/dataservice show record <datastreamUID> <recordUID>`
 * `bin/dataservice create record <datastreamUID> < new-record.json`
-* `bin/dataservice update record <datastreamUID> <recordUID> < modified-record.json` (WIP)
+* `bin/dataservice update record <datastreamUID> <recordUID> < modified-record.json` (Broken)
 * `bin/dataservice destroy record <datastreamUID> <recordUID>` (WIP)
+
+Note: Updating records is broken. Instead of updating an existing record, the Data Service will create a new record.
 
 Commands to delete models will ask for confirmation before sending the request to the Data Service.
