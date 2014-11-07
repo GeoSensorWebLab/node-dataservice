@@ -161,6 +161,20 @@ function destroyDatastream(args) {
   });
 }
 
+function destroyRecord(args) {
+  var rl = readline.createInterface(process.stdin, process.stdout);
+  rl.question("Destroy record? YES/[no]: ", function (answer) {
+    if (answer !== "YES") {
+      console.log("No confirmation, so not deleting record.");
+      process.exit(1);
+    } else {
+      var run = require('./destroy-record.js');
+      run(args.datastreamUID, args.recordUID);
+      rl.close();
+    }
+  });
+}
+
 /* Parse Args
 ************/
 program
@@ -300,6 +314,10 @@ program
     .command('datastream <userUID> <sensorUID> <datastreamUID>')
       .description("Deletes a datastream. You will be asked for confirmation.")
       .action(destroyDatastream)
+      .parent
+    .command('record <datastreamUID> <recordUID>')
+      .description("Deletes a record. You will be asked for confirmation.")
+      .action(destroyRecord)
       .parent
     .parent
   .parse(process.argv);
