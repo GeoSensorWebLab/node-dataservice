@@ -8,6 +8,12 @@ Install Node.js. From the command line, use `npm` to install the prerequisites f
 
     $ npm install
 
+Next create a configuration file to hold details about the Data Service. Because the Data Service URL is private, it is not checked into version control. Create a file in the repo called `.data-service` with the following contents:
+
+    {
+      "url": "http://dataservice.example.com/v01"
+    }
+
 Then you can execute the tool:
 
     $ bin/data-service
