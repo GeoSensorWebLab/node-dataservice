@@ -110,6 +110,12 @@ function updateDatastream(args) {
   });
 }
 
+function updateRecord(args) {
+  readPipe(args.etc[0], function (body) {
+    var run = require('./update-record.js');
+    run(args.datastreamUID, args.recordUID, body);
+  });
+}
 
 /* DELETE
 ************/
@@ -267,6 +273,16 @@ program
         cmd.outputIndented('Examples', [
           '$ bin/data-service update datastream 05b57a33ded81eec75ed0af82a5487d3 9b8c94bd21dc54db93b1ef73243a3fcc 2517f1bd2e68216b8598c30333377c95 < modified-datastream.json',
           '$ cat modified-datastream.json | bin/data-service update datastream 05b57a33ded81eec75ed0af82a5487d3 9b8c94bd21dc54db93b1ef73243a3fcc 2517f1bd2e68216b8598c30333377c95'
+        ]);
+      })
+      .parent
+    .command('record <datastreamUID> <recordUID>')
+      .description("Update a datastream record. Pipe a JSON representation of the record to this command.")
+      .action(updateRecord)
+      .on('help', function(cmd) {
+        cmd.outputIndented('Examples', [
+          '$ bin/data-service update record 2517f1bd2e68216b8598c30333377c95 bbe5473217b7a9c5c5662885600eca56 < modified-record.json',
+          '$ cat modified-record.json | bin/data-service update record 2517f1bd2e68216b8598c30333377c95 bbe5473217b7a9c5c5662885600eca56'
         ]);
       })
       .parent
