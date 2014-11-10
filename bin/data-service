@@ -39,7 +39,7 @@ function listRecords(args) {
 ************/
 function showUser(args) {
   var run = require('./show-user.js');
-  run(args.uid);
+  run(args.userUID);
 }
 
 function showSensor(args) {
@@ -198,7 +198,7 @@ program
     .parent
 
   .command('show')
-    .command('user <UID>')
+    .command('user <userUID>')
       .description("Show a user")
       .action(showUser)
       .parent
