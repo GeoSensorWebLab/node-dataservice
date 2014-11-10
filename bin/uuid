@@ -1,0 +1,6 @@
+#!/usr/bin/env node
+
+var uuid = require('uuid');
+
+var id = uuid.v4().split('-').join('');
+console.log(id);
