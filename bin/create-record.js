@@ -17,6 +17,16 @@ module.exports = function(datastreamUID, body) {
     if (err) throw err;
 
     var options = JSON.parse(data);
-    post([options.url, "datastreams", datastreamUID, "records"].join("/"), body);
+    var URL = [options.url, "datastreams", datastreamUID, "records"].join("/");
+
+    // If array, upload one at a time
+    var uploadData = JSON.parse(body);
+    if (Array.isArray(uploadData)) {
+      uploadData.forEach(function (record) {
+        post(URL, JSON.stringify(record));
+      });
+    } else {
+      post(URL, body);
+    }
   });
 };

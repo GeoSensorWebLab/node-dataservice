@@ -55,3 +55,5 @@ Datastream Record Commands:
 Note: Updating records is broken. Instead of updating an existing record, the Data Service will create a new record. If you delete the original record, the secondary record will be deleted as well.
 
 Commands to delete models will ask for confirmation before sending the request to the Data Service.
+
+When creating datastream records, a file with a single JSON object will create a single datastream record. A file with an array of JSON objects will create multiple datastream records, each with their own POST request.
