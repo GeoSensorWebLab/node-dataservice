@@ -40,7 +40,7 @@ Datastream Commands:
 
 * `bin/dataservice list datastreams <userUID> <sensorUID>`
 * `bin/dataservice show datastream <userUID> <sensorUID> <datastreamUID>`
-* `bin/dataservice create datastream <userUID> <datastreamUID> < new-datastream.json`
+* `bin/dataservice create datastream <userUID> <sensorUID> < new-datastream.json`
 * `bin/dataservice update datastream <userUID> <sensorUID> <datastreamUID> < modified-datastream.json`
 * `bin/dataservice destroy datastream <userUID> <sensorUID> <datastreamUID>`
 
