@@ -2,6 +2,8 @@
 
 A Node Command Line Interface to the RPI Data Service.
 
+**Please Note:** As of 2020, the RPI Data Service is no longer online. We recommend using OGC SensorThings API instead. This code is provided online as a reference to a now deprecated system.
+
 ## Setup
 
 Install Node.js. From the command line, use `npm` to install the prerequisites for the `node-dataservice` tool.
@@ -57,3 +59,11 @@ Note: Updating records is broken. Instead of updating an existing record, the Da
 Commands to delete models will ask for confirmation before sending the request to the Data Service.
 
 When creating datastream records, a file with a single JSON object will create a single datastream record. A file with an array of JSON objects will create multiple datastream records, each with their own POST request.
+
+## License
+
+MIT License
+
+## Authors
+
+James Badger (<jpbadger@ucalgary.ca>)
